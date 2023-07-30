@@ -6,10 +6,5 @@ class TreeNode(_value: Int = 0, _left: TreeNode = null, _right: TreeNode = null)
 
 def maxDepth(root: TreeNode): Int = {
   if (root == null) 0
-  else {
-    val left = maxDepth(root.left)
-    val right = maxDepth(root.right)
-    if (left > right) left + 1
-    else right + 1
-  }
+  else math.max(maxDepth(root.left), maxDepth(root.right)) + 1
 }
