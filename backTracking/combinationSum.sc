@@ -1,19 +1,16 @@
 def combinationSum(candidates: Array[Int], target: Int): List[List[Int]] = {
-  val result = scala.collection.mutable.ListBuffer[List[Int]]()
+  var answer = List.empty[List[Int]]
 
-  def searchRec(remain: Int, from: Int, comb: List[Int]): Unit = {
-    if (remain == 0) result += comb
-    else if (remain > 0) {
-      for (i <- from until candidates.length) {
-        searchRec(remain - candidates(i), i, candidates(i) :: comb)
+  def backtracking(curr: List[Int], sum: Int, start: Int): Unit = {
+    if (sum == target) answer = curr :: answer
+    else {
+      for (i <- start until candidates.length) {
+        val c = candidates(i)
+        if (c + sum <= target) backtracking(c :: curr, sum + c, i)
       }
     }
   }
 
-  searchRec(target, 0, Nil)
-
-  result
-    .map(_.sorted)
-    .distinct
-    .toList
+  backtracking(Nil, 0, 0)
+  answer
 }
