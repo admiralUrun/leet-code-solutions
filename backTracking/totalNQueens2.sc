@@ -1,9 +1,9 @@
 def totalNQueens(n: Int): Int = {
   def totalNQueens(
                     row: Int,
-                    diagonals: scala.collection.mutable.Set[Int],
-                    antiDiagonals: scala.collection.mutable.Set[Int],
-                    cols: scala.collection.mutable.Set[Int],
+                    diagonals: List[Int],
+                    antiDiagonals: List[Int],
+                    cols: List[Int],
                   ): Int = {
     if (row == n) return 1
 
@@ -12,20 +12,12 @@ def totalNQueens(n: Int): Int = {
       val diagonal = row - col
       val antiDiagonal = row + col
       if (!cols.contains(col) && !diagonals.contains(diagonal) && !antiDiagonals.contains(antiDiagonal)) {
-        cols.add(col)
-        diagonals.add(diagonal)
-        antiDiagonals.add(antiDiagonal)
-
-        solution += totalNQueens(row + 1, diagonals, antiDiagonals, cols)
-
-        cols.remove(col)
-        diagonals.remove(diagonal)
-        antiDiagonals.remove(antiDiagonal)
+        solution += totalNQueens(row + 1, diagonal :: diagonals, antiDiagonal :: antiDiagonals, col :: cols)
       }
     }
 
     solution
   }
 
-  totalNQueens(0, scala.collection.mutable.Set(), scala.collection.mutable.Set(), scala.collection.mutable.Set())
+  totalNQueens(0, Nil, Nil, Nil)
 }
