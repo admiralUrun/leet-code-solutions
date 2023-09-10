@@ -371,3 +371,201 @@ var join = function(arr1, arr2) {
 
     return Object.values(obj);
 };
+
+/**
+ * @param {any[]} arr
+ * @param {number} depth
+ * @return {any[]}
+ */
+var flat = function (arr, n) {
+    let result = []
+    let i = 0
+    while (i < arr.length) {
+        if (Array.isArray(arr[i]) && n > 0) result.push(...flat(arr[i], n - 1))
+        else result.push(arr[i])
+        i++;
+    }
+    return result
+};
+
+/**
+ * @param {Object|Array} obj
+ * @return {Object|Array}
+ */
+var compactObject = function (obj) {
+    let result
+    if (Array.isArray(obj)) {
+        result = []
+        for (let key in obj) {
+            const item = obj[key]
+            if (Boolean(item)) result.push(typeof item == 'object' || Array.isArray(item) ? compactObject(item) : item)
+        }
+    } else {
+        result = {}
+        for (let key in obj) {
+            const val = obj[key]
+            if (Boolean(val)) result[key] = typeof val == 'object' || Array.isArray(val) ? compactObject(val) : val
+        }
+    }
+    return result;
+};
+
+class EventEmitter {
+    subs = {}
+    subscribe(event, cb) {
+        if (!this.subs[event]) {
+            this.subs[event] = []
+        }
+        this.subs[event].push(cb)
+        return {
+            unsubscribe: () => {
+                const handlers = this.subs[event]
+                if (handlers) {
+                    this.subs[event] = handlers.filter(fn => fn !== cb)
+                }
+            }
+        };
+    }
+
+    emit(event, args = []) {
+        return this.subs[event] ? this.subs[event].map(fn => fn(...args)) : []
+    }
+}
+
+// ---------------ArrayWrapper---------------
+/**
+ * @param {number[]} nums
+ */
+const ArrayWrapper = function(nums) {
+    this.nums = nums;
+}
+
+ArrayWrapper.prototype.valueOf = function() {
+    return this.nums.reduce((acc, curr) => acc + curr, 0);
+}
+
+ArrayWrapper.prototype.toString = function() {
+    return JSON.stringify(this.nums);
+}
+// ------------------------------
+
+// --------------Calculator--------------------
+class Calculator {
+
+    /**
+     * @param {number} value
+     */
+    constructor(value) {
+        this.value = value
+        return this
+    }
+
+    /**
+     * @param {number} value
+     * @return {Calculator}
+     */
+    add(value){
+        this.value += value
+        return this
+    }
+
+    /**
+     * @param {number} value
+     * @return {Calculator}
+     */
+    subtract(value){
+        this.value -= value
+        return this
+    }
+
+    /**
+     * @param {number} value
+     * @return {Calculator}
+     */
+    multiply(value) {
+        this.value *= value
+        return this
+    }
+
+    /**
+     * @param {number} value
+     * @return {Calculator}
+     */
+    divide(value) {
+        if (value === 0) throw new Error("Division by zero is not allowed")
+        this.value /= value
+        return this
+    }
+
+    /**
+     * @param {number} value
+     * @return {Calculator}
+     */
+    power(value) {
+        this.value = Math.pow(this.value, value)
+        return this
+    }
+
+    /**
+     * @return {number}
+     */
+    getResult() {
+        return this.value
+    }
+}
+// ----------------------------------
+
+/**
+ * @param {Function[]} functions
+ * @param {number} n
+ * @return {Promise<any>}
+ */
+var promisePool = async function(functions, n) {
+    return new Promise((resolve) => {
+        let inProgressCount = 0;
+        let functionIndex = 0;
+        function helper() {
+            if (functionIndex >= functions.length) {
+                if (inProgressCount === 0) resolve();
+                return;
+            }
+
+            while (inProgressCount < n && functionIndex < functions.length) {
+                inProgressCount++;
+                const promise = functions[functionIndex]();
+                functionIndex++;
+                promise.then(() => {
+                    inProgressCount--;
+                    helper();
+                });
+            }
+        }
+        helper();
+    });
+};
+
+/**
+ * @param {Function} fn
+ * @param {number} t
+ * @return {Function}
+ */
+var throttle = function(fn, t) {
+    let toProcess = null
+    let working = null
+    const helper = () => {
+        if (toProcess === null) working = null
+        else {
+            fn(...toProcess)
+            toProcess = null
+            working = setTimeout(helper, t)
+        }
+    };
+    return function(...args) {
+        if (working) {
+            toProcess = args
+        } else {
+            fn(...args)
+            working = setTimeout(helper, t)
+        }
+    }
+};
