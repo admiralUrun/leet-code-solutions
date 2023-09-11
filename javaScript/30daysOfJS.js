@@ -2,8 +2,8 @@
  * @param {Function[]} functions
  * @return {Function}
  */
-var compose = function(functions) {
-    return function(x) {
+var compose = function (functions) {
+    return function (x) {
         let result = x;
         for (let i = functions.length - 1; i >= 0; i--) {
             result = functions[i](result);
@@ -16,9 +16,9 @@ var compose = function(functions) {
  * @param {number} n
  * @return {Function} counter
  */
-var createCounter = function(n) {
-    let count = n -1;
-    return function() {
+var createCounter = function (n) {
+    let count = n - 1;
+    return function () {
         count++;
         return count;
     };
@@ -28,14 +28,14 @@ var createCounter = function(n) {
  * @param {string} val
  * @return {Object}
  */
-var expect = function(val) {
+var expect = function (val) {
     return {
         toBe: (any) => {
-            if(any !== val) throw new Error ("Not Equal");
+            if (any !== val) throw new Error("Not Equal");
             return val === any;
         },
         notToBe: (any) => {
-            if(any === val) throw new Error("Equal");
+            if (any === val) throw new Error("Equal");
             return val !== any;
         }
     };
@@ -45,12 +45,18 @@ var expect = function(val) {
  * @param {number} init
  * @return { increment: Function, decrement: Function, reset: Function }
  */
-var createCounter2 = function(init) {
+var createCounter2 = function (init) {
     let count = init;
     return {
-        increment: () => { return ++count;},
-        reset: () => { return count = init;},
-        decrement: () => { return --count;}
+        increment: () => {
+            return ++count;
+        },
+        reset: () => {
+            return count = init;
+        },
+        decrement: () => {
+            return --count;
+        }
     };
 };
 
@@ -59,8 +65,8 @@ var createCounter2 = function(init) {
  * @param {Function} fn
  * @return {number[]}
  */
-var map = function(arr, fn) {
-    for(i=0; i<arr.length ; i++){
+var map = function (arr, fn) {
+    for (i = 0; i < arr.length; i++) {
         arr[i] = fn(arr[i], i)
     }
     return arr;
@@ -71,7 +77,7 @@ var map = function(arr, fn) {
  * @param {Function} fn
  * @return {number[]}
  */
-var filter = function(arr, fn) {
+var filter = function (arr, fn) {
     const result = [];
     let i = 0;
     let j = 0;
@@ -91,7 +97,7 @@ var filter = function(arr, fn) {
  * @param {number} init
  * @return {number}
  */
-var reduce = function(nums, fn, init) {
+var reduce = function (nums, fn, init) {
     let acc = init;
     for (let i = 0; i < nums.length; i++) {
         acc = fn(acc, nums[i]);
@@ -103,8 +109,8 @@ var reduce = function(nums, fn, init) {
  * @param {Function[]} functions
  * @return {Function}
  */
-var compose = function(functions) {
-    return function(x) {
+var compose = function (functions) {
+    return function (x) {
         let result = x;
         for (let i = functions.length - 1; i >= 0; i--) {
             result = functions[i](result);
@@ -116,7 +122,7 @@ var compose = function(functions) {
 /**
  * @return {number}
  */
-var argumentsLength = function(...args) {
+var argumentsLength = function (...args) {
     return args.length
 };
 
@@ -124,9 +130,9 @@ var argumentsLength = function(...args) {
  * @param {Function} fn
  * @return {Function}
  */
-var once = function(fn) {
+var once = function (fn) {
     let called = false;
-    return function(...args){
+    return function (...args) {
         if (!called) {
             called = true;
             return fn(...args)
@@ -139,7 +145,7 @@ var once = function(fn) {
  */
 function memoize(fn) {
     const map = new Map();
-    return function(...args) {
+    return function (...args) {
         const key = args.join("-")
         if (map.has(key)) {
             return map.get(key);
@@ -156,7 +162,7 @@ function memoize(fn) {
  * @param {Promise} promise2
  * @return {Promise}
  */
-var addTwoPromises = async function(promise1, promise2) {
+var addTwoPromises = async function (promise1, promise2) {
     return await promise1 + await promise2;
 };
 
@@ -173,9 +179,9 @@ async function sleep(millis) {
  * @param {number} t
  * @return {Function}
  */
-var cancellable = function(fn, args, t) {
+var cancellable = function (fn, args, t) {
     const callTime = setTimeout(() => fn.apply(null, args), t);
-    const cancelFn = function() {
+    const cancelFn = function () {
         clearTimeout(callTime);
     };
 
@@ -188,9 +194,11 @@ var cancellable = function(fn, args, t) {
  * @param {number} t
  * @return {Function}
  */
-var cancellable = function(fn, args, t) {
+var cancellable = function (fn, args, t) {
     fn(...args)
-    const id = setInterval(() => {fn(...args)}, t)
+    const id = setInterval(() => {
+        fn(...args)
+    }, t)
     const cancelFun = function () {
         clearInterval(id);
     };
@@ -202,13 +210,15 @@ var cancellable = function(fn, args, t) {
  * @param {number} t
  * @return {Function}
  */
-var timeLimit = function(fn, t) {
-    return async function(...args) {
+var timeLimit = function (fn, t) {
+    return async function (...args) {
         return new Promise(async (resolve, reject) => {
-            const id = setTimeout(() => { reject("Time Limit Exceeded");}, t);
+            const id = setTimeout(() => {
+                reject("Time Limit Exceeded");
+            }, t);
             try {
                 resolve(await fn(...args))
-            } catch(e) {
+            } catch (e) {
                 reject(e)
             }
 
@@ -216,7 +226,7 @@ var timeLimit = function(fn, t) {
     }
 };
 // ----------------TimeLimitedCache------------------
-var TimeLimitedCache = function() {
+var TimeLimitedCache = function () {
     this.map = new Map();
 };
 
@@ -226,13 +236,13 @@ var TimeLimitedCache = function() {
  * @param {number} duration time until expiration in ms
  * @return {boolean} if un-expired key already existed
  */
-TimeLimitedCache.prototype.set = function(key, value, duration) {
+TimeLimitedCache.prototype.set = function (key, value, duration) {
     const inCache = this.map.get(key);
     if (inCache) {
         clearTimeout(inCache.timeout);
     }
     const timeout = setTimeout(() => this.map.delete(key), duration);
-    this.map.set(key, { value, timeout });
+    this.map.set(key, {value, timeout});
     return Boolean(inCache);
 };
 
@@ -240,14 +250,14 @@ TimeLimitedCache.prototype.set = function(key, value, duration) {
  * @param {number} key
  * @return {number} value associated with key
  */
-TimeLimitedCache.prototype.get = function(key) {
+TimeLimitedCache.prototype.get = function (key) {
     return this.map.has(key) ? this.map.get(key).value : -1;
 };
 
 /**
  * @return {number} count of non-expired keys
  */
-TimeLimitedCache.prototype.count = function() {
+TimeLimitedCache.prototype.count = function () {
     return this.map.size;
 };
 // ----------------------------------
@@ -257,9 +267,9 @@ TimeLimitedCache.prototype.count = function() {
  * @param {number} t milliseconds
  * @return {Function}
  */
-var debounce = function(fn, t) {
+var debounce = function (fn, t) {
     let id = null;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(id);
         id = setTimeout(() => fn(...args), t)
     }
@@ -269,7 +279,7 @@ var debounce = function(fn, t) {
  * @param {Array<Function>} functions
  * @return {Promise<any>}
  */
-var promiseAll = function(functions) {
+var promiseAll = function (functions) {
     return new Promise((resolve, reject) => {
         let results = [];
         let count = 0;
@@ -278,7 +288,7 @@ var promiseAll = function(functions) {
             resolve(results);
         }
 
-        for (let i = 0; i < functions.length; i ++) {
+        for (let i = 0; i < functions.length; i++) {
             functions[i]()
                 .then((r) => {
                     results[i] = r;
@@ -297,7 +307,7 @@ var promiseAll = function(functions) {
  * @param {Object | Array} obj
  * @return {boolean}
  */
-var isEmpty = function(obj) {
+var isEmpty = function (obj) {
     return !Object.keys(obj).length
 };
 
@@ -306,7 +316,7 @@ var isEmpty = function(obj) {
  * @param {number} size
  * @return {Array[]}
  */
-var chunk = function(arr, size) {
+var chunk = function (arr, size) {
     const results = [];
     let i = 0;
     while (i < arr.length) {
@@ -323,7 +333,7 @@ var chunk = function(arr, size) {
     return results;
 };
 
-Array.prototype.last = function() {
+Array.prototype.last = function () {
     return this.length ? this[this.length - 1] : -1;
 };
 
@@ -331,9 +341,9 @@ Array.prototype.last = function() {
  * @param {Function} fn
  * @return {Array}
  */
-Array.prototype.groupBy = function(fn) {
+Array.prototype.groupBy = function (fn) {
     const result = {};
-    for(let i = 0; i < this.length; i++) {
+    for (let i = 0; i < this.length; i++) {
         const key = fn(this[i])
         if (result[key]) {
             result[key].push(this[i])
@@ -349,8 +359,8 @@ Array.prototype.groupBy = function(fn) {
  * @param {Function} fn
  * @return {Array}
  */
-var sortBy = function(arr, fn) {
-    return arr.sort((a,b) => fn(a) - fn(b))
+var sortBy = function (arr, fn) {
+    return arr.sort((a, b) => fn(a) - fn(b))
 };
 
 /**
@@ -358,7 +368,7 @@ var sortBy = function(arr, fn) {
  * @param {Array} arr2
  * @return {Array}
  */
-var join = function(arr1, arr2) {
+var join = function (arr1, arr2) {
     const all = arr1.concat(arr2);
     const obj = {};
     all.forEach(el => {
@@ -412,6 +422,7 @@ var compactObject = function (obj) {
 
 class EventEmitter {
     subs = {}
+
     subscribe(event, cb) {
         if (!this.subs[event]) {
             this.subs[event] = []
@@ -436,15 +447,15 @@ class EventEmitter {
 /**
  * @param {number[]} nums
  */
-const ArrayWrapper = function(nums) {
+const ArrayWrapper = function (nums) {
     this.nums = nums;
 }
 
-ArrayWrapper.prototype.valueOf = function() {
+ArrayWrapper.prototype.valueOf = function () {
     return this.nums.reduce((acc, curr) => acc + curr, 0);
 }
 
-ArrayWrapper.prototype.toString = function() {
+ArrayWrapper.prototype.toString = function () {
     return JSON.stringify(this.nums);
 }
 // ------------------------------
@@ -464,7 +475,7 @@ class Calculator {
      * @param {number} value
      * @return {Calculator}
      */
-    add(value){
+    add(value) {
         this.value += value
         return this
     }
@@ -473,7 +484,7 @@ class Calculator {
      * @param {number} value
      * @return {Calculator}
      */
-    subtract(value){
+    subtract(value) {
         this.value -= value
         return this
     }
@@ -513,6 +524,7 @@ class Calculator {
         return this.value
     }
 }
+
 // ----------------------------------
 
 /**
@@ -520,10 +532,11 @@ class Calculator {
  * @param {number} n
  * @return {Promise<any>}
  */
-var promisePool = async function(functions, n) {
+var promisePool = async function (functions, n) {
     return new Promise((resolve) => {
         let inProgressCount = 0;
         let functionIndex = 0;
+
         function helper() {
             if (functionIndex >= functions.length) {
                 if (inProgressCount === 0) resolve();
@@ -540,6 +553,7 @@ var promisePool = async function(functions, n) {
                 });
             }
         }
+
         helper();
     });
 };
@@ -549,7 +563,7 @@ var promisePool = async function(functions, n) {
  * @param {number} t
  * @return {Function}
  */
-var throttle = function(fn, t) {
+var throttle = function (fn, t) {
     let toProcess = null
     let working = null
     const helper = () => {
@@ -560,7 +574,7 @@ var throttle = function(fn, t) {
             working = setTimeout(helper, t)
         }
     };
-    return function(...args) {
+    return function (...args) {
         if (working) {
             toProcess = args
         } else {
@@ -574,7 +588,7 @@ var throttle = function(fn, t) {
  * @param {Function} fn
  * @return {Function}
  */
-var curry = function(fn) {
+var curry = function (fn) {
     return function curried(...args) {
         if (args.length >= fn.length) {
             return fn(...args)
@@ -584,4 +598,63 @@ var curry = function(fn) {
             };
         }
     };
+};
+
+/**
+ * @param {any} o1
+ * @param {any} o2
+ * @return {boolean}
+ */
+var areDeeplyEqual = function (o1, o2) {
+    if (!o1 || !o2) return o1 === o2
+    if ((!Array.isArray(o1) && Array.isArray(o2)) || Array.isArray(o1) && !Array.isArray(o2)) return false
+    const keys1 = Object.keys(o1);
+    const keys2 = Object.keys(o2);
+
+    if (keys1.length !== keys2.length) return false
+
+    for (const key of keys1) {
+        if (!keys2.includes(key)) return false
+    }
+
+    if (keys1.length === 0 && typeof o1 !== 'object') return o1 === o2
+
+    for (const key in o1) {
+        if ((typeof o1[key] == 'object' || Array.isArray(o1[key]))) {
+            if (!areDeeplyEqual(o1[key], o2[key])) return false
+        } else if (o1[key] !== o2[key]) return false
+    }
+    return true
+};
+
+/**
+ * @param {any} object
+ * @return {string}
+ */
+var jsonStringify = function (object) {
+    if (object == null) return "null"
+    else if (typeof object === 'string') return `"${object}"`
+    else if (typeof object !== 'object' && !Array.isArray(object)) return object.toString()
+    else if (Array.isArray(object)) {
+        const result = object
+            .map(e => {
+                if (typeof e == 'object' || Array.isArray(e)) return jsonStringify(e)
+                else if (typeof e === 'string') return `"${e}"`
+                else return e.toString()
+            })
+            .join(',')
+
+        return '[' + result + ']'
+    } else {
+        const results = []
+        for (const key in object) {
+            let result = `"${key}":`
+            if (typeof object[key] === 'string') result += `"${object[key]}"`
+            else if (typeof object[key] == 'object' || Array.isArray(object[key])) result += jsonStringify(object[key])
+            else result += object[key]
+
+            results.push(result)
+        }
+        return `{${results.join(',')}}`
+    }
 };
