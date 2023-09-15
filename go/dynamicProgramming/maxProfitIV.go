@@ -3,14 +3,9 @@ func maxProfit(k int, prices []int) int {
 
 	for i := 0; i < len(prices); i++ {
 		dp[i] = make([][2]int, k+1)
-	}
-
-	for i := 0; i < len(prices); i++ {
 		for j := 0; j <= k; j++ {
-			dp[i][j][0] = math.MinInt32
-			dp[i][j][1] = math.MinInt32
+			dp[i][j][0], dp[i][j][1] = math.MinInt32, math.MinInt32
 		}
-
 	}
 
 	dp[0][0][0] = 0
@@ -30,4 +25,11 @@ func maxProfit(k int, prices []int) int {
 		res = max(res, dp[len(prices)-1][i][0])
 	}
 	return res
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
