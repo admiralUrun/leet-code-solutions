@@ -34,4 +34,3 @@ class Trie() {
     true
   }
 
-}
